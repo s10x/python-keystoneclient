@@ -12,6 +12,7 @@
 
 import abc
 import logging
+import os
 
 from oslo_config import cfg
 import six
@@ -123,7 +124,13 @@ class Auth(BaseAuth):
         self.auth_methods = auth_methods
 
     def get_auth_ref(self, session, **kwargs):
-        headers = {'Accept': 'application/json'}
+        acct_name = os.environ.get("ZS_ACCT_NAME")
+        if not acct_name:
+            raise exceptions.AuthorizationFailure(
+                    _('Zerostack Account Name required. Set environment '
+                        'variable ZS_ACCT_NAME'))
+
+        headers = { 'Accept': 'application/json', 'X-ZS-Acct-Name': acct_name}
         body = {'auth': {'identity': {}}}
         ident = body['auth']['identity']
         rkwargs = {}

@@ -139,7 +139,7 @@ class BaseGenericPlugin(base.BaseIdentityPlugin):
 
             if path.startswith('/v2.0') and not self._has_domain_scope:
                 plugin = self.create_plugin(session, (2, 0), self.auth_url)
-            elif path.startswith('/v3'):
+            elif path.startswith('/v3') or path.startswith('/v1/openstack/keystone/v3'):
                 plugin = self.create_plugin(session, (3, 0), self.auth_url)
 
         else:

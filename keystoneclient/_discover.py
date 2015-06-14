@@ -23,6 +23,7 @@ raw data specified in version discovery responses.
 
 import logging
 import re
+import os
 
 from keystoneclient import exceptions
 from keystoneclient.i18n import _, _LI, _LW
@@ -35,7 +36,12 @@ _LOGGER = logging.getLogger(__name__)
 @utils.positional()
 def get_version_data(session, url, authenticated=None):
     """Retrieve raw version data from a url."""
-    headers = {'Accept': 'application/json'}
+    acct_name = os.environ.get("ZS_ACCT_NAME")
+    if not acct_name:
+      raise exceptions.DiscoveryFailure('Zerostack Account Name required. Set'
+          'environment variable ZS_ACCT_NAME')
+
+    headers = {'Accept': 'application/json','X-ZS-Acct-Name': acct_name}
 
     resp = session.get(url, headers=headers, authenticated=authenticated)
 
